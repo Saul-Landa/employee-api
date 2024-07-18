@@ -1,4 +1,6 @@
-FROM ubuntu:latest
-LABEL authors="salag"
+FROM openjdk:17
+VOLUME /tmp
+EXPOSE 8080
+ADD ./target/employee-api-0.0.1-SNAPSHOT.jar employee-api.jar
 
-ENTRYPOINT ["top", "-b"]
+ENTRYPOINT ["java", "-jar", "/employee-api.jar"]
