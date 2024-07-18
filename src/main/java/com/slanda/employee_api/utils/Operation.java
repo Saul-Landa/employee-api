@@ -1,19 +1,35 @@
 package com.slanda.employee_api.utils;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Operation {
-    enum OrderEnum {
-        ASC,
-        DESC
+
+    public enum OrderEnum {
+        ASC {
+            @Override
+            public Comparator<Integer> getComparator() {
+                return Comparator.naturalOrder();
+            }
+        },
+        DESC {
+            @Override
+            public Comparator<Integer> getComparator() {
+                return Comparator.reverseOrder();
+            }
+        };
+
+        public abstract Comparator<Integer> getComparator();
     }
 
     public static void main(String[] args) {
-        List<Integer> numbers = Arrays.asList(4,5,7,2,5,8,9,4,6);
+        Scanner scanner = new Scanner(System.in);
+        List<Integer> numbers = new ArrayList<>();
 
+        System.out.println("Ingrese una lista de números enteros (ingrese 'q' para terminar):");
+        while (scanner.hasNextInt()) {
+            numbers.add(scanner.nextInt());
+        }
 
         System.out.println("===========================");
         System.out.println("ASC");
@@ -25,11 +41,11 @@ public class Operation {
     }
 
     public static void list(List<Integer> numbers, OrderEnum order) {
-        switch ( order ) {
-            case DESC ->  numbers = numbers.stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
-            case ASC -> numbers = numbers.stream().sorted().collect(Collectors.toList());
-        }
+        String numbersOrdered = numbers.stream()
+                .sorted(order.getComparator())
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
 
-        numbers.forEach(System.out::println);
+        System.out.println(numbersOrdered);
     }
 }

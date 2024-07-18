@@ -11,6 +11,8 @@ services:
     environment:
       MYSQL_DATABASE: dev_employee_db
       MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - ./mysql-data:/var/lib/mysql
 
   employee-service:
     image: employee-api:1.0.0

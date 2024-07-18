@@ -1,6 +1,7 @@
 package com.slanda.employee_api.services.impl;
 
 import com.slanda.employee_api.dto.EmployeeDTO;
+import com.slanda.employee_api.exceptions.EmployeeNotFoundException;
 import com.slanda.employee_api.models.Employee;
 import com.slanda.employee_api.repositories.EmployeeRepository;
 import com.slanda.employee_api.services.IEmployeeService;
@@ -9,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class EmployeeService implements IEmployeeService {
@@ -27,13 +27,11 @@ public class EmployeeService implements IEmployeeService {
 
     @Transactional(readOnly = true)
     @Override
-    public Employee findById(Long id) throws Exception {
-        Optional<Employee> employee = employeeRepository.findById(id);
-        if ( employee.isPresent() ) {
-            return employee.get();
-        }
-
-        throw new Exception(GlobalVariables.EMPLOYEE_NOT_FOUND_MESSAGE);
+    public Employee findById(Long id) {
+        return employeeRepository.findById(id).orElseThrow(
+                () -> new EmployeeNotFoundException(
+                        GlobalVariables.EMPLOYEE_NOT_FOUND_MESSAGE + id
+                ));
     }
 
     @Transactional
@@ -50,7 +48,7 @@ public class EmployeeService implements IEmployeeService {
 
     @Transactional
     @Override
-    public Employee update(EmployeeDTO employeeDTO, Long id)  throws Exception {
+    public Employee update(EmployeeDTO employeeDTO, Long id) {
         Employee employee = findById(id);
 
         employee.setName(employeeDTO.getName());
@@ -62,12 +60,12 @@ public class EmployeeService implements IEmployeeService {
 
     @Transactional
     @Override
-    public void delete(Long id) throws Exception {
+    public void delete(Long id) {
         try {
             Employee employee = findById(id);
             employeeRepository.delete(employee);
         } catch (Exception exception) {
-            throw new Exception(exception.getMessage());
+            throw new EmployeeNotFoundException(exception.getMessage());
         }
     }
 }

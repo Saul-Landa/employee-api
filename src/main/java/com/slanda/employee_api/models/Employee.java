@@ -17,7 +17,10 @@ public class Employee implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(length = 60)
     private String name;
+    @Column(length = 80)
     private String position;
+    @Column(precision = 2)
     private double salary;
 }
